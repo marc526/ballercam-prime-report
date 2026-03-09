@@ -89,6 +89,31 @@ box.innerHTML='<b style="font-size:14px">🏀 BallerCam Prime Checker</b><br><br
   return "javascript:" + code;
 }
 
+function CopyBookmarklet({ linkRef }: { linkRef: React.RefObject<HTMLAnchorElement | null> }) {
+  const [copied, setCopied] = useState(false);
+  const code = buildBookmarklet();
+
+  // Still set the ref href in case drag ever works
+  useEffect(() => {
+    if (linkRef.current) linkRef.current.setAttribute("href", code);
+  }, [code, linkRef]);
+
+  async function copy() {
+    await navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  }
+
+  return (
+    <button
+      onClick={copy}
+      className="w-full bg-[#ff9900] hover:bg-[#ffb84d] text-black font-bold px-6 py-3 rounded-xl text-sm transition-colors"
+    >
+      {copied ? "✅ Copied! Now add it as a bookmark →" : "📋 Copy Bookmarklet Code"}
+    </button>
+  );
+}
+
 export default function RunPage() {
   const [secret, setSecret] = useState("");
   const [status, setStatus] = useState<
@@ -101,13 +126,6 @@ export default function RunPage() {
   useEffect(() => {
     const saved = localStorage.getItem("ballercam-prime-secret");
     if (saved) setSecret(saved);
-  }, []);
-
-  // Bypass React's javascript: URL sanitization by setting href directly on DOM
-  useEffect(() => {
-    if (linkRef.current) {
-      linkRef.current.setAttribute("href", buildBookmarklet());
-    }
   }, []);
 
   // Handle incoming data from bookmarklet (hash-based)
@@ -221,23 +239,20 @@ export default function RunPage() {
         {/* Bookmarklet */}
         <div className="bg-gray-800 rounded-xl p-5 mb-5">
           <p className="text-sm font-medium text-gray-300 mb-3">
-            Drag to your bookmarks bar{" "}
+            Install bookmarklet{" "}
             <span className="text-gray-500 font-normal">(one-time setup)</span>
           </p>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a
-            ref={linkRef}
-            href="#"
-            draggable
-            onClick={(e) => e.preventDefault()}
-            className="inline-block bg-[#ff9900] hover:bg-[#ffb84d] text-black font-bold px-6 py-3 rounded-xl cursor-grab active:cursor-grabbing select-none text-sm"
-          >
-            🏀 Check BallerCam Prime
-          </a>
-          <p className="text-gray-500 text-xs mt-3">
-            Drag the button above to your bookmarks bar. Then every week:
-            go to amazon.com and click it. Results auto-save here when done.
-          </p>
+          <CopyBookmarklet linkRef={linkRef} />
+          <div className="mt-4 text-xs text-gray-400 space-y-1">
+            <p className="font-semibold text-gray-300">To install in Chrome:</p>
+            <ol className="list-decimal list-inside space-y-1">
+              <li>Click <b>Copy Code</b> above</li>
+              <li>Right-click your bookmarks bar → <b>Add page…</b></li>
+              <li>Set name: <span className="text-gray-200">🏀 BallerCam Prime</span></li>
+              <li>Paste the copied code as the <b>URL</b></li>
+              <li>Click Save</li>
+            </ol>
+          </div>
         </div>
 
         {/* Weekly instructions */}
