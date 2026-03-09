@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const BOOKMARKLET_CODE = `javascript:(async function(){
+// Bookmarklet runs on amazon.com (same origin = no CORS), then opens
+// /run#data=BASE64 which auto-saves here.
+function buildBookmarklet(): string {
+  const vercelUrl = "https://ballercam-prime-report.vercel.app";
+  const code = `(async function(){
 const ASINS=[
   {asin:'B0FZF3R8VC',model:'iPhone 13 Pro'},
   {asin:'B0FZDX1N6N',model:'iPhone 13 Pro Max'},
@@ -37,10 +41,12 @@ const LOCS=[
   {zip:'80202',city:'Denver',state:'CO'}
 ];
 const box=document.createElement('div');
-box.style.cssText='position:fixed;top:16px;right:16px;background:#232f3e;color:#fff;padding:20px;border-radius:12px;z-index:2147483647;font-family:sans-serif;font-size:13px;width:320px;max-height:420px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.4)';
+box.style.cssText='position:fixed;top:16px;right:16px;background:#232f3e;color:#fff;padding:20px;border-radius:12px;z-index:2147483647;font-family:sans-serif;font-size:13px;width:300px;max-height:400px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.5)';
 document.body.appendChild(box);
-const log=[];
-function render(extra){box.innerHTML='<b style="font-size:15px">🏀 BallerCam Prime Checker</b><br><br>'+log.slice(-12).join('<br>')+(extra?'<br>'+extra:'');}
+const rows=[];
+function render(status){
+  box.innerHTML='<b style="font-size:14px">🏀 BallerCam Prime Checker</b><br><br>'+rows.slice(-10).join('<br>')+(status?'<br><span style="color:#9ca3af">'+status+'</span>':'');
+}
 render('Starting…');
 async function changeZip(zip){
   try{
@@ -61,7 +67,7 @@ async function checkAsin(asin){
 }
 const results={};
 for(const loc of LOCS){
-  render('📍 '+loc.city+', '+loc.state+'…');
+  render('📍 '+loc.city+'…');
   await changeZip(loc.zip);
   await new Promise(r=>setTimeout(r,1500));
   const checks=await Promise.all(ASINS.map(async a=>{
@@ -71,94 +77,172 @@ for(const loc of LOCS){
     return p;
   }));
   const n=checks.filter(Boolean).length;
-  log.push((n>0?'🟡':'🔴')+' '+loc.city+': '+n+'/'+ASINS.length+' Prime');
+  rows.push((n>2?'🟡':'🔴')+' '+loc.city+': '+n+'/'+ASINS.length);
   render('');
 }
 const data={results,checkedAt:new Date().toISOString(),checkedAtMs:Date.now()};
-const json=JSON.stringify(data);
-await navigator.clipboard.writeText(json);
-box.innerHTML='<b style="font-size:15px">🏀 BallerCam Prime Checker</b><br><br>'+log.join('<br>')+'<br><br><span style="color:#4ade80;font-weight:bold">✅ Done! Results copied to clipboard.</span><br><br>Now go to:<br><a href="https://ballercam-prime-report.vercel.app/run" style="color:#00a8e1" target="_blank">ballercam-prime-report.vercel.app/run</a><br>and paste the JSON to save the report.';
+const encoded=btoa(JSON.stringify(data));
+box.innerHTML='<b style="font-size:14px">🏀 BallerCam Prime Checker</b><br><br>'+rows.join('<br>')+'<br><br><span style="color:#4ade80;font-weight:bold">✅ Done! Opening report…</span>';
+setTimeout(()=>{ window.open('${vercelUrl}/run#data='+encoded,'_blank'); },800);
 })();`;
+  return "javascript:" + code;
+}
 
 export default function RunPage() {
   const [secret, setSecret] = useState("");
-  const [json, setJson] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [result, setResult] = useState<"success" | "error" | null>(null);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "saving" | "success" | "error" | "no-secret"
+  >("idle");
+  const [checkedAt, setCheckedAt] = useState<string | null>(null);
+  const linkRef = useRef<HTMLAnchorElement>(null);
 
-  async function saveResults() {
-    setSaving(true);
-    setResult(null);
-    try {
-      const parsed = JSON.parse(json);
-      const res = await fetch("/api/save-results", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-save-secret": secret,
-        },
-        body: JSON.stringify(parsed),
-      });
-      if (res.ok) {
-        setResult("success");
-      } else {
-        const err = await res.json();
-        setErrorMsg(err.error || "Unknown error");
-        setResult("error");
-      }
-    } catch (e) {
-      setErrorMsg("Invalid JSON — make sure you pasted the full clipboard output.");
-      setResult("error");
-    } finally {
-      setSaving(false);
+  // Load saved secret from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("ballercam-prime-secret");
+    if (saved) setSecret(saved);
+  }, []);
+
+  // Bypass React's javascript: URL sanitization by setting href directly on DOM
+  useEffect(() => {
+    if (linkRef.current) {
+      linkRef.current.setAttribute("href", buildBookmarklet());
     }
+  }, []);
+
+  // Handle incoming data from bookmarklet (hash-based)
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash.startsWith("#data=")) return;
+
+    const encoded = hash.slice(6);
+    window.history.replaceState(null, "", "/run"); // clean up URL
+
+    const savedSecret = localStorage.getItem("ballercam-prime-secret");
+    if (!savedSecret) {
+      setStatus("no-secret");
+      return;
+    }
+
+    // Auto-save
+    (async () => {
+      setStatus("saving");
+      try {
+        const json = atob(encoded);
+        const parsed = JSON.parse(json);
+        setCheckedAt(parsed.checkedAt);
+        const res = await fetch("/api/save-results", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-save-secret": savedSecret,
+          },
+          body: json,
+        });
+        setStatus(res.ok ? "success" : "error");
+      } catch {
+        setStatus("error");
+      }
+    })();
+  }, []);
+
+  function handleSecretChange(val: string) {
+    setSecret(val);
+    localStorage.setItem("ballercam-prime-secret", val);
   }
 
   return (
     <main className="min-h-screen bg-gray-900 text-white p-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-xl mx-auto">
         <h1 className="text-2xl font-bold mb-1">
-          🏀 BallerCam Prime — Run Report
+          🏀 BallerCam Prime — Runner
         </h1>
         <p className="text-gray-400 text-sm mb-8">
-          Run the checker on Amazon using the bookmarklet below, then paste the
-          results here to save the public report.
+          One-time setup, then one click every week.
         </p>
 
-        {/* Step 1 */}
-        <div className="bg-gray-800 rounded-xl p-5 mb-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-              STEP 1
-            </span>
-            <span className="font-semibold">Add the bookmarklet to your browser</span>
+        {/* Auto-save result */}
+        {status === "saving" && (
+          <div className="mb-6 p-4 bg-blue-900 border border-blue-600 rounded-xl text-blue-200 text-sm">
+            ⏳ Saving report data…
           </div>
-          <p className="text-gray-400 text-sm mb-4">
-            Drag this button to your bookmarks bar:
+        )}
+        {status === "success" && (
+          <div className="mb-6 p-4 bg-green-900 border border-green-600 rounded-xl">
+            <p className="text-green-300 font-bold text-base mb-1">
+              ✅ Report saved!
+            </p>
+            <p className="text-green-400 text-sm mb-3">
+              {checkedAt
+                ? `Checked ${new Date(checkedAt).toLocaleString()}`
+                : ""}
+              {" · "}Vercel auto-deploys in ~1 min.
+            </p>
+            <a
+              href="/"
+              className="inline-block bg-green-600 hover:bg-green-500 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              View Public Report →
+            </a>
+          </div>
+        )}
+        {status === "error" && (
+          <div className="mb-6 p-4 bg-red-900 border border-red-600 rounded-xl text-red-300 text-sm">
+            ❌ Save failed — check your secret below and try running again.
+          </div>
+        )}
+        {status === "no-secret" && (
+          <div className="mb-6 p-4 bg-yellow-900 border border-yellow-600 rounded-xl text-yellow-300 text-sm">
+            ⚠️ Results received but no secret saved. Enter your secret below,
+            then run the bookmarklet again.
+          </div>
+        )}
+
+        {/* Secret */}
+        <div className="bg-gray-800 rounded-xl p-5 mb-5">
+          <label className="block text-sm font-medium text-gray-300 mb-1">
+            Save Secret{" "}
+            <span className="text-gray-500 font-normal">
+              (saved in your browser)
+            </span>
+          </label>
+          <input
+            type="password"
+            value={secret}
+            onChange={(e) => handleSecretChange(e.target.value)}
+            placeholder="prime-report-secret-2026"
+            className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <p className="text-gray-500 text-xs mt-1">
+            Stored locally — you only need to enter this once.
           </p>
+        </div>
+
+        {/* Bookmarklet */}
+        <div className="bg-gray-800 rounded-xl p-5 mb-5">
+          <p className="text-sm font-medium text-gray-300 mb-3">
+            Drag to your bookmarks bar{" "}
+            <span className="text-gray-500 font-normal">(one-time setup)</span>
+          </p>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
-            href={BOOKMARKLET_CODE}
-            className="inline-block bg-[#ff9900] hover:bg-[#ffb84d] text-black font-bold px-5 py-2.5 rounded-lg cursor-grab active:cursor-grabbing select-none"
-            onClick={(e) => e.preventDefault()}
+            ref={linkRef}
+            href="#"
             draggable
+            onClick={(e) => e.preventDefault()}
+            className="inline-block bg-[#ff9900] hover:bg-[#ffb84d] text-black font-bold px-6 py-3 rounded-xl cursor-grab active:cursor-grabbing select-none text-sm"
           >
             🏀 Check BallerCam Prime
           </a>
           <p className="text-gray-500 text-xs mt-3">
-            Tip: drag the orange button above directly onto your bookmarks bar.
+            Drag the button above to your bookmarks bar. Then every week:
+            go to amazon.com and click it. Results auto-save here when done.
           </p>
         </div>
 
-        {/* Step 2 */}
-        <div className="bg-gray-800 rounded-xl p-5 mb-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-              STEP 2
-            </span>
-            <span className="font-semibold">Run it on Amazon</span>
-          </div>
-          <ol className="text-gray-400 text-sm space-y-1 list-decimal list-inside">
+        {/* Weekly instructions */}
+        <div className="bg-gray-800 rounded-xl p-5 text-sm text-gray-400">
+          <p className="font-semibold text-gray-200 mb-2">Weekly run:</p>
+          <ol className="list-decimal list-inside space-y-1">
             <li>
               Go to{" "}
               <a
@@ -169,69 +253,14 @@ export default function RunPage() {
               >
                 amazon.com
               </a>{" "}
-              and make sure you&apos;re logged in
+              (logged in)
             </li>
-            <li>Click the bookmarklet in your bookmarks bar</li>
+            <li>Click the bookmarklet — a status panel appears in the corner</li>
+            <li>Wait ~2–3 min for all 10 locations to complete</li>
             <li>
-              A status panel appears — wait ~2–3 minutes for all 10 locations
-            </li>
-            <li>
-              When done, results are{" "}
-              <span className="text-green-400 font-semibold">
-                automatically copied to your clipboard
-              </span>
+              A new tab opens here and auto-saves — you&apos;re done
             </li>
           </ol>
-        </div>
-
-        {/* Step 3 */}
-        <div className="bg-gray-800 rounded-xl p-5 mb-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-              STEP 3
-            </span>
-            <span className="font-semibold">Paste results and save</span>
-          </div>
-
-          <textarea
-            value={json}
-            onChange={(e) => setJson(e.target.value)}
-            placeholder='Paste JSON here (Cmd+V)…'
-            className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 text-xs font-mono h-28 outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-3"
-          />
-
-          <label className="block text-sm font-medium text-gray-300 mb-1">
-            Save Secret
-          </label>
-          <input
-            type="password"
-            value={secret}
-            onChange={(e) => setSecret(e.target.value)}
-            placeholder="Your SAVE_SECRET from Vercel"
-            className="w-full bg-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-          />
-
-          <button
-            onClick={saveResults}
-            disabled={saving || !json || !secret}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors"
-          >
-            {saving ? "Saving…" : "💾 Save Report"}
-          </button>
-
-          {result === "success" && (
-            <div className="mt-4 p-3 bg-green-900 border border-green-600 rounded-lg text-green-300 text-sm">
-              ✅ Report saved! Vercel will auto-deploy in ~1 minute.{" "}
-              <a href="/" className="underline font-semibold">
-                View public report →
-              </a>
-            </div>
-          )}
-          {result === "error" && (
-            <div className="mt-4 p-3 bg-red-900 border border-red-600 rounded-lg text-red-300 text-sm">
-              ❌ {errorMsg}
-            </div>
-          )}
         </div>
       </div>
     </main>
