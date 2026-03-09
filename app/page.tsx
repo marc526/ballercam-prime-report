@@ -12,7 +12,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/get-results")
+    fetch("/report-data.json")
       .then((r) => {
         if (!r.ok) throw new Error("No report data yet");
         return r.json();

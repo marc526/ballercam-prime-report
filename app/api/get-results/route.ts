@@ -1,10 +1,7 @@
-import { kv } from "@vercel/kv";
+// This route is no longer needed — the frontend reads /report-data.json directly
+// Kept as a pass-through for compatibility
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const data = await kv.get("prime-report");
-  if (!data) {
-    return NextResponse.json({ error: "No report data yet" }, { status: 404 });
-  }
-  return NextResponse.json(data);
+  return NextResponse.json({ redirect: "/report-data.json" }, { status: 200 });
 }
