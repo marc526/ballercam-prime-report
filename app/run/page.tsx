@@ -62,7 +62,8 @@ async function checkAsin(asin){
   try{
     const r=await fetch('/dp/'+asin,{credentials:'include'});
     const h=await r.text();
-    return h.includes('Prime members')||h.includes('FREE delivery');
+    // Look for Prime-specific delivery text — avoid broad "FREE delivery" which appears everywhere
+    return h.includes('FREE Prime delivery')||h.includes('Prime FREE delivery')||h.includes('prime_logo_small')||h.includes('primeExclusivePricingMessage')||h.includes('Get Prime') && h.includes('FREE delivery');
   }catch(e){return false;}
 }
 const results={};
@@ -82,8 +83,8 @@ for(const loc of LOCS){
 }
 const data={results,checkedAt:new Date().toISOString(),checkedAtMs:Date.now()};
 const encoded=btoa(JSON.stringify(data));
-box.innerHTML='<b style="font-size:14px">🏀 BallerCam Prime Checker</b><br><br>'+rows.join('<br>')+'<br><br><span style="color:#4ade80;font-weight:bold">✅ Done! Opening report…</span>';
-setTimeout(()=>{ window.open('${vercelUrl}/run#data='+encoded,'_blank'); },800);
+const url='${vercelUrl}/run#data='+encoded;
+box.innerHTML='<b style="font-size:14px">🏀 BallerCam Prime Checker</b><br><br>'+rows.join('<br>')+'<br><br><span style="color:#4ade80;font-weight:bold">✅ Done!</span><br><br><a href="'+url+'" target="_blank" style="display:inline-block;background:#2563eb;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:13px">→ Save Report</a>';
 })();`;
   return "javascript:" + code;
 }
