@@ -4,7 +4,8 @@ function getColor(count: number) {
   if (count === 0) return "#ef4444";
   if (count <= 2) return "#f87171";
   if (count <= 4) return "#fbbf24";
-  return "#f59e0b";
+  if (count <= 9) return "#f59e0b";
+  return "#22c55e";
 }
 
 function getRadius(count: number) {
@@ -30,10 +31,10 @@ export default function USMap({ report }: { report: ReportData }) {
         <span className="text-red-500">📍</span> Prime SKU Count by Location
       </h2>
 
-      <div className="relative w-full" style={{ paddingBottom: "62.5%" }}>
+      <div className="w-full" style={{ height: "280px" }}>
         <svg
           viewBox="0 0 800 500"
-          className="absolute inset-0 w-full h-full"
+          className="w-full h-full"
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* US map outline — simplified shape */}
@@ -116,7 +117,8 @@ export default function USMap({ report }: { report: ReportData }) {
           { color: "#ef4444", label: "0 Prime SKUs" },
           { color: "#f87171", label: "1–2 Prime SKUs" },
           { color: "#fbbf24", label: "3–4 Prime SKUs" },
-          { color: "#f59e0b", label: "5+ Prime SKUs" },
+          { color: "#f59e0b", label: "5–9 Prime SKUs" },
+          { color: "#22c55e", label: "10+ Prime SKUs" },
         ].map((item) => (
           <div key={item.label} className="flex items-center gap-1.5">
             <span
