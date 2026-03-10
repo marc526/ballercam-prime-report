@@ -32,8 +32,8 @@ export default function USMap({ report }: { report: ReportData }) {
         <span className="text-red-500">📍</span> Prime SKU Count by Location
       </h2>
 
-      {/* padding-bottom: 44% = 396/900 — keeps aspect ratio, fills full card width */}
-      <div className="relative w-full" style={{ paddingBottom: "44%" }}>
+      {/* padding-bottom: 30.8% = 44% × 0.7 — 30% smaller than previous */}
+      <div className="relative w-full" style={{ paddingBottom: "30.8%" }}>
         <svg
           viewBox={`0 0 ${mapW} ${mapH}`}
           className="absolute inset-0 w-full h-full"
