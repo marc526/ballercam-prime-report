@@ -1,5 +1,29 @@
 {
   "results": {
+    "B0G21QKPXC": {
+      "10001": false,
+      "13090": false,
+      "27601": false,
+      "32801": false,
+      "60601": false,
+      "77001": false,
+      "80202": false,
+      "91101": false,
+      "94103": false,
+      "98101": false
+    },
+    "B0G2199F5H": {
+      "10001": false,
+      "13090": false,
+      "27601": false,
+      "32801": false,
+      "60601": false,
+      "77001": false,
+      "80202": false,
+      "91101": false,
+      "94103": false,
+      "98101": false
+    },
     "B0FZDX1DTJ": {
       "10001": false,
       "13090": false,
@@ -13,6 +37,18 @@
       "98101": false
     },
     "B0G2143V1X": {
+      "10001": false,
+      "13090": false,
+      "27601": false,
+      "32801": false,
+      "60601": false,
+      "77001": false,
+      "80202": false,
+      "91101": false,
+      "94103": false,
+      "98101": false
+    },
+    "B0FZF5236Y": {
       "10001": false,
       "13090": false,
       "27601": false,
@@ -39,30 +75,6 @@
     "B0FZF3R8VC": {
       "10001": true,
       "13090": true,
-      "27601": true,
-      "32801": false,
-      "60601": true,
-      "77001": false,
-      "80202": false,
-      "91101": false,
-      "94103": false,
-      "98101": false
-    },
-    "B0FZF3SHL2": {
-      "10001": false,
-      "13090": false,
-      "27601": false,
-      "32801": false,
-      "60601": false,
-      "77001": false,
-      "80202": false,
-      "91101": false,
-      "94103": false,
-      "98101": false
-    },
-    "B0G21QKPXC": {
-      "10001": false,
-      "13090": false,
       "27601": false,
       "32801": false,
       "60601": false,
@@ -76,6 +88,30 @@
       "10001": false,
       "13090": false,
       "27601": true,
+      "32801": true,
+      "60601": false,
+      "77001": false,
+      "80202": false,
+      "91101": false,
+      "94103": false,
+      "98101": false
+    },
+    "B0FZF19Z91": {
+      "10001": true,
+      "13090": false,
+      "27601": false,
+      "32801": true,
+      "60601": false,
+      "77001": false,
+      "80202": false,
+      "91101": false,
+      "94103": false,
+      "98101": false
+    },
+    "B0FZDTG2F7": {
+      "10001": true,
+      "13090": false,
+      "27601": false,
       "32801": false,
       "60601": false,
       "77001": false,
@@ -83,6 +119,18 @@
       "91101": false,
       "94103": false,
       "98101": false
+    },
+    "B0FZDX1N6N": {
+      "10001": true,
+      "13090": true,
+      "27601": true,
+      "32801": true,
+      "60601": true,
+      "77001": false,
+      "80202": true,
+      "91101": false,
+      "94103": false,
+      "98101": true
     },
     "B0FZDXV7JJ": {
       "10001": false,
@@ -96,7 +144,31 @@
       "94103": false,
       "98101": false
     },
-    "B0FZDTG2F7": {
+    "B0FZDT9XW6": {
+      "10001": true,
+      "13090": true,
+      "27601": true,
+      "32801": true,
+      "60601": true,
+      "77001": false,
+      "80202": false,
+      "91101": false,
+      "94103": false,
+      "98101": false
+    },
+    "B0FZDY2ZT8": {
+      "10001": true,
+      "13090": false,
+      "27601": false,
+      "32801": true,
+      "60601": false,
+      "77001": false,
+      "80202": false,
+      "91101": false,
+      "94103": false,
+      "98101": false
+    },
+    "B0FZF41D8K": {
       "10001": true,
       "13090": false,
       "27601": false,
@@ -120,46 +192,10 @@
       "94103": false,
       "98101": false
     },
-    "B0G2199F5H": {
-      "10001": false,
-      "13090": false,
-      "27601": false,
-      "32801": false,
-      "60601": false,
-      "77001": false,
-      "80202": false,
-      "91101": false,
-      "94103": false,
-      "98101": false
-    },
-    "B0FZF5236Y": {
-      "10001": false,
-      "13090": false,
-      "27601": false,
-      "32801": false,
-      "60601": false,
-      "77001": false,
-      "80202": false,
-      "91101": false,
-      "94103": false,
-      "98101": false
-    },
-    "B0FZF41D8K": {
-      "10001": true,
-      "13090": false,
-      "27601": false,
-      "32801": false,
-      "60601": false,
-      "77001": false,
-      "80202": false,
-      "91101": false,
-      "94103": false,
-      "98101": false
-    },
     "B0FZDQX8T1": {
       "10001": true,
       "13090": false,
-      "27601": true,
+      "27601": false,
       "32801": false,
       "60601": true,
       "77001": false,
@@ -168,12 +204,12 @@
       "94103": false,
       "98101": false
     },
-    "B0FZDY2ZT8": {
-      "10001": true,
+    "B0FZF3SHL2": {
+      "10001": false,
       "13090": false,
       "27601": false,
-      "32801": true,
-      "60601": true,
+      "32801": false,
+      "60601": false,
       "77001": false,
       "80202": false,
       "91101": false,
@@ -191,44 +227,8 @@
       "91101": true,
       "94103": true,
       "98101": false
-    },
-    "B0FZF19Z91": {
-      "10001": false,
-      "13090": false,
-      "27601": false,
-      "32801": false,
-      "60601": false,
-      "77001": false,
-      "80202": false,
-      "91101": false,
-      "94103": false,
-      "98101": false
-    },
-    "B0FZDX1N6N": {
-      "10001": true,
-      "13090": true,
-      "27601": true,
-      "32801": true,
-      "60601": true,
-      "77001": false,
-      "80202": true,
-      "91101": false,
-      "94103": false,
-      "98101": true
-    },
-    "B0FZDT9XW6": {
-      "10001": true,
-      "13090": true,
-      "27601": true,
-      "32801": true,
-      "60601": true,
-      "77001": false,
-      "80202": false,
-      "91101": false,
-      "94103": false,
-      "98101": false
     }
   },
-  "checkedAt": "2026-03-11T02:48:14.563Z",
-  "checkedAtMs": 1773197294563
+  "checkedAt": "2026-03-11T06:40:46.709Z",
+  "checkedAtMs": 1773211246709
 }
