@@ -2,9 +2,9 @@
   "results": {
     "B0FZF3R8VC": {
       "10001": true,
-      "13090": false,
+      "13090": true,
       "27601": true,
-      "32801": false,
+      "32801": true,
       "60601": true,
       "77001": false,
       "80202": true,
@@ -19,7 +19,7 @@
       "32801": true,
       "60601": true,
       "77001": false,
-      "80202": false,
+      "80202": true,
       "91101": false,
       "94103": false,
       "98101": false
@@ -28,7 +28,7 @@
       "10001": true,
       "13090": true,
       "27601": true,
-      "32801": false,
+      "32801": true,
       "60601": true,
       "77001": false,
       "80202": false,
@@ -44,8 +44,8 @@
       "60601": false,
       "77001": false,
       "80202": false,
-      "91101": false,
-      "94103": false,
+      "91101": true,
+      "94103": true,
       "98101": true
     },
     "B0FZDX1DTJ": {
@@ -74,9 +74,9 @@
     },
     "B0FZDTG2F7": {
       "10001": true,
-      "13090": false,
+      "13090": true,
       "27601": true,
-      "32801": false,
+      "32801": true,
       "60601": true,
       "77001": false,
       "80202": false,
@@ -86,9 +86,9 @@
     },
     "B0FZDY2ZT8": {
       "10001": true,
-      "13090": false,
+      "13090": true,
       "27601": true,
-      "32801": false,
+      "32801": true,
       "60601": true,
       "77001": false,
       "80202": false,
@@ -109,10 +109,10 @@
       "98101": false
     },
     "B0G1CYJ88R": {
-      "10001": true,
-      "13090": false,
+      "10001": false,
+      "13090": true,
       "27601": true,
-      "32801": false,
+      "32801": true,
       "60601": true,
       "77001": false,
       "80202": false,
@@ -122,24 +122,24 @@
     },
     "B0FZF19Z91": {
       "10001": true,
-      "13090": false,
+      "13090": true,
       "27601": true,
-      "32801": false,
+      "32801": true,
       "60601": true,
       "77001": false,
       "80202": false,
-      "91101": false,
-      "94103": false,
+      "91101": true,
+      "94103": true,
       "98101": false
     },
     "B0FZF41D8K": {
       "10001": true,
       "13090": true,
       "27601": true,
-      "32801": false,
+      "32801": true,
       "60601": true,
       "77001": false,
-      "80202": false,
+      "80202": true,
       "91101": true,
       "94103": true,
       "98101": false
@@ -152,13 +152,13 @@
       "60601": true,
       "77001": false,
       "80202": false,
-      "91101": true,
-      "94103": true,
+      "91101": false,
+      "94103": false,
       "98101": false
     },
     "B0G1826FYW": {
       "10001": true,
-      "13090": false,
+      "13090": true,
       "27601": true,
       "32801": true,
       "60601": true,
@@ -170,7 +170,7 @@
     },
     "B0FZDY4LGV": {
       "10001": true,
-      "13090": false,
+      "13090": true,
       "27601": true,
       "32801": true,
       "60601": true,
@@ -181,23 +181,23 @@
       "98101": false
     },
     "B0G2199F5H": {
-      "10001": false,
-      "13090": false,
+      "10001": true,
+      "13090": true,
       "27601": false,
-      "32801": false,
-      "60601": false,
+      "32801": true,
+      "60601": true,
       "77001": false,
       "80202": false,
-      "91101": false,
+      "91101": true,
       "94103": false,
       "98101": false
     },
     "B0G2143V1X": {
-      "10001": false,
+      "10001": true,
       "13090": false,
       "27601": false,
       "32801": false,
-      "60601": false,
+      "60601": true,
       "77001": false,
       "80202": false,
       "91101": false,
@@ -205,11 +205,11 @@
       "98101": false
     },
     "B0G1ZRYT2Q": {
-      "10001": false,
+      "10001": true,
       "13090": false,
       "27601": false,
       "32801": false,
-      "60601": false,
+      "60601": true,
       "77001": false,
       "80202": false,
       "91101": false,
@@ -218,9 +218,9 @@
     },
     "B0G21QKPXC": {
       "10001": true,
-      "13090": false,
+      "13090": true,
       "27601": true,
-      "32801": false,
+      "32801": true,
       "60601": true,
       "77001": false,
       "80202": true,
@@ -229,6 +229,6 @@
       "98101": false
     }
   },
-  "checkedAt": "2026-07-29T01:46:26.159Z",
-  "checkedAtMs": 1785289586159
+  "checkedAt": "2026-08-05T18:45:25.986Z",
+  "checkedAtMs": 1785955525986
 }
